@@ -1186,22 +1186,24 @@ insp=<inspected variable>
 			);
 		});
 
-		it("to the observatory uri provided by the user when not specified in launch.json", async () => {
-			const process = spawnDartProcessPaused(helloWorldMainFile, helloWorldFolder);
-			const observatoryUri = await process.vmServiceUri;
+		for (let i = 0; i < 10; i++) {
+			it.only(`to the observatory uri provided by the user when not specified in launch.json ${i}`, async () => {
+				const process = spawnDartProcessPaused(helloWorldMainFile, helloWorldFolder);
+				const observatoryUri = await process.vmServiceUri;
 
-			const showInputBox = sb.stub(vs.window, "showInputBox");
-			showInputBox.resolves(observatoryUri);
+				const showInputBox = sb.stub(vs.window, "showInputBox");
+				showInputBox.resolves(observatoryUri);
 
-			const config = await attachDebugger(undefined);
-			await waitAllThrowIfTerminates(dc,
-				dc.configurationSequence(),
-				dc.waitForEvent("terminated"),
-				dc.launch(config),
-			);
+				const config = await attachDebugger(undefined);
+				await waitAllThrowIfTerminates(dc,
+					dc.configurationSequence(),
+					dc.waitForEvent("terminated"),
+					dc.launch(config),
+				);
 
-			assert.ok(showInputBox.calledOnce);
-		});
+				assert.ok(showInputBox.calledOnce);
+			});
+		}
 
 		it("to a paused Dart script and can set breakpoints", async () => {
 			const process = spawnDartProcessPaused(helloWorldMainFile, helloWorldFolder);
